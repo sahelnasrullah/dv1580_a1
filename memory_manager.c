@@ -72,32 +72,3 @@ void mem_deinit() {
     memory_pool = NULL;
     free_memory_array = NULL;
 }
-
-
-
-int main() {
-    // Test 1: Initialize memory pool
-    printf("Test 1:\n");
-    mem_init(1024);  // Initialize 1KB memory pool
-    if (memory_pool == NULL || free_memory_array == NULL) {
-        printf("Test 1 failed!\n");
-        return 1;
-    }
-    printf("Test 1 passed.\n");
-
-    // Test 2: Memory allocation and free
-    printf("Test 2:\n");
-    void* block1 = mem_alloc(347);
-    void* block2 = mem_alloc(153);
-    if (block1 == NULL || block2 == NULL) {
-        printf("Test 2 failed!\n");
-        return 1;
-    }
-    printf("Test 2:n");
-
-    mem_free(block1);
-    mem_free(block2);
-    printf("Test 2 passed.\n");
-
-    return 0;
-}
