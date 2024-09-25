@@ -30,14 +30,9 @@ void mem_init(size_t size) {
 void* mem_alloc(size_t size) {
     Memory_Block* current = free_memory_array;
 
-    if (size > memory_left) {
-        printf("Not enough memory available\n");
-        return NULL;
-    }
-
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            // Split block if larger than requested
+            // Split block if > than req
             if (current->size > size + sizeof(Memory_Block)) {
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
                 new_block->size = current->size - size - sizeof(Memory_Block);
@@ -48,13 +43,13 @@ void* mem_alloc(size_t size) {
                 current->next = new_block;
             }
             current->free = 0;
-            memory_left -= size + sizeof(Memory_Block);
+            memory_left -= current->size;
             return (void*)(current + 1);
         }
         current = current->next;
     }
 
-    printf("Not enough memory\n");
+    printf("Not enough memory available\n");
     return NULL;
 }
 
@@ -66,8 +61,7 @@ void mem_free(void* block) {
     Memory_Block* mem_block = (Memory_Block*)block - 1;
     mem_block->free = 1;
 
-    memory_left += mem_block->size + sizeof(Memory_Block);
-
+    memory_left += mem_block->size;
     Memory_Block* current = free_memory_array;
     while (current != NULL) {
         if (current->free && current->next && current->next->free) {
@@ -82,7 +76,7 @@ void* mem_resize(void* block, size_t new_size) {
     if (block == NULL) {
         return mem_alloc(new_size);
     }
-
+    
     Memory_Block* mem_block = (Memory_Block*)block - 1;
     
     if (mem_block->size >= new_size) {
