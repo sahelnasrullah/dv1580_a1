@@ -4,18 +4,17 @@
 #include <stdint.h>
 #include "memory_manager.h"
 
-
 typedef struct Node {
     uint16_t data;
     struct Node* next;
 } Node;
 
-void list_init(Node** head) {
+void list_init(Node** head, size_t node_size) {
     *head = NULL;
 }
 
-void list_insert(Node** head, int data) {
-    Node* new_node = (Node*)mem_alloc(sizeof(Node));
+void list_insert(Node** head, int data, size_t node_size) {
+    Node* new_node = (Node*)mem_alloc(node_size);
     if (new_node == NULL) {
         printf("Failed to find memory for new node\n");
         return;
@@ -35,12 +34,12 @@ void list_insert(Node** head, int data) {
     }
 }
 
-void list_insert_after(Node* prev_node, int data) {
+void list_insert_after(Node* prev_node, int data, size_t node_size) {
     if (prev_node == NULL) {
         return;
     }
 
-    Node* new_node = (Node*)mem_alloc(sizeof(Node));
+    Node* new_node = (Node*)mem_alloc(node_size);
     if (new_node == NULL) {
         return;
     }
@@ -50,13 +49,13 @@ void list_insert_after(Node* prev_node, int data) {
     prev_node->next = new_node;
 }
 
-void list_insert_before(Node** head, Node* next_node, int data) {
+void list_insert_before(Node** head, Node* next_node, int data, size_t node_size) {
     if (*head == NULL || next_node == NULL) {
         return;
     }
 
     if (*head == next_node) {
-        list_insert(head, data);
+        list_insert(head, data, node_size);
         return;
     }
 
@@ -66,7 +65,7 @@ void list_insert_before(Node** head, Node* next_node, int data) {
     }
 
     if (current != NULL) {
-        Node* new_node = (Node*)mem_alloc(sizeof(Node));
+        Node* new_node = (Node*)mem_alloc(node_size);
         if (new_node == NULL) {
             return;
         }
@@ -77,7 +76,7 @@ void list_insert_before(Node** head, Node* next_node, int data) {
     }
 }
 
-void list_delete(Node** head, int data) {
+void list_delete(Node** head, int data, size_t node_size) {
     if (*head == NULL) {
         return;
     }
@@ -148,7 +147,7 @@ int list_count_nodes(Node** head) {
     return node_counter;
 }
 
-void list_cleanup(Node** head) {
+void list_cleanup(Node** head, size_t node_size) {
     Node* current = *head;
     while (current != NULL) {
         Node* next = current->next;
