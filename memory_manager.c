@@ -67,6 +67,27 @@ void mem_free(void* block) {
     }
 }
 
+void* mem_resize(void* block, size_t new_size) {
+    if (block == NULL) {
+        return mem_alloc(new_size);
+    }
+
+    Memory_Block* mem_block = (Memory_Block*)block - 1;
+    
+    if (mem_block->size >= new_size) {
+        return block;
+    }
+
+
+    void* new_block = mem_alloc(new_size);
+    if (new_block != NULL) {
+        memcpy(new_block, block, mem_block->size); 
+        mem_free(block); 
+    }
+
+    return new_block;
+}
+
 void mem_deinit() {
     free(memory_pool);
     memory_pool = NULL;
