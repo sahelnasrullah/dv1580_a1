@@ -32,7 +32,7 @@ void* mem_alloc(size_t size) {
 
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            // Split block if > than req
+            // Exact match or split block if larger than requested
             if (current->size > size + sizeof(Memory_Block)) {
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
                 new_block->size = current->size - size - sizeof(Memory_Block);
@@ -43,13 +43,13 @@ void* mem_alloc(size_t size) {
                 current->next = new_block;
             }
             current->free = 0;
-            memory_left -= current->size;
+            memory_left -= current->size + sizeof(Memory_Block);  // Uppdatera tillgängligt minne
             return (void*)(current + 1);
         }
         current = current->next;
     }
 
-    printf("Not enough memory available\n");
+    printf("Not enough memory\n");
     return NULL;
 }
 
@@ -57,11 +57,12 @@ void mem_free(void* block) {
     if (block == NULL) {
         return;
     }
-    
+
     Memory_Block* mem_block = (Memory_Block*)block - 1;
     mem_block->free = 1;
+    memory_left += mem_block->size + sizeof(Memory_Block);
 
-    memory_left += mem_block->size;
+    // Combine adjacent free blocks
     Memory_Block* current = free_memory_array;
     while (current != NULL) {
         if (current->free && current->next && current->next->free) {
@@ -76,17 +77,17 @@ void* mem_resize(void* block, size_t new_size) {
     if (block == NULL) {
         return mem_alloc(new_size);
     }
-    
+
     Memory_Block* mem_block = (Memory_Block*)block - 1;
-    
+
     if (mem_block->size >= new_size) {
         return block;
     }
 
     void* new_block = mem_alloc(new_size);
     if (new_block != NULL) {
-        memcpy(new_block, block, mem_block->size); 
-        mem_free(block); 
+        memcpy(new_block, block, mem_block->size);
+        mem_free(block);
     }
 
     return new_block;
