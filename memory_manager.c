@@ -32,7 +32,11 @@ void* mem_alloc(size_t size) {
 
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            // Exact match or split block if larger than requested
+            // Kontrollera om tillräckligt med minne finns kvar totalt
+            if (memory_left < size) {
+                printf("Memory allocation error: Not enough memory left\n");
+                return NULL;
+            }
             if (current->size > size + sizeof(Memory_Block)) {
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
                 new_block->size = current->size - size - sizeof(Memory_Block);
@@ -44,11 +48,6 @@ void* mem_alloc(size_t size) {
             }
             current->free = 0;
             memory_left -= current->size + sizeof(Memory_Block);
-
-            if (memory_left < 0) {
-                printf("Memory allocation error: Not enough memory left\n");
-                return NULL;
-            }
 
             return (void*)(current + 1);
         }
