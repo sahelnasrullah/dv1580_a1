@@ -28,14 +28,15 @@ void mem_init(size_t size) {
 }
 
 void* mem_alloc(size_t size) {
-    Memory_Block* current = free_memory_array;
 
+    if (memory_left < size + sizeof(Memory_Block)) {
+        printf("Not enough memory\n");
+        return NULL;
+    }
+
+    Memory_Block* current = free_memory_array;
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            if (memory_left < size + sizeof(Memory_Block)) {
-                printf("Not enough memory\n");
-                return NULL;
-            }
 
             if (current->size > size + sizeof(Memory_Block)) {
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
@@ -46,7 +47,6 @@ void* mem_alloc(size_t size) {
                 current->size = size;
                 current->next = new_block;
             }
-
             current->free = 0;
             memory_left -= current->size + sizeof(Memory_Block);
             return (void*)(current + 1);
