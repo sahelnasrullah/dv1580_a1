@@ -43,7 +43,13 @@ void* mem_alloc(size_t size) {
                 current->next = new_block;
             }
             current->free = 0;
-            memory_left -= current->size + sizeof(Memory_Block);  // Uppdatera tillgängligt minne
+            memory_left -= current->size + sizeof(Memory_Block);
+
+            if (memory_left < 0) {
+                printf("Memory allocation error: Not enough memory left\n");
+                return NULL;
+            }
+
             return (void*)(current + 1);
         }
         current = current->next;
