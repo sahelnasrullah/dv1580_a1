@@ -67,7 +67,7 @@ void mem_free(void* block) {
     mem_block->free = 1;
     memory_left += mem_block->size + sizeof(Memory_Block);
 
-    // Combine adjacent free blocks
+
     Memory_Block* current = free_memory_array;
     while (current != NULL) {
         if (current->free && current->next && current->next->free) {
