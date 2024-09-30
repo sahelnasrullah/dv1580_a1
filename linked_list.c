@@ -5,12 +5,10 @@
 #include "memory_manager.h"
 #include "linked_list.h"
 
-// Initierar listan
 void list_init(Node** head,size_t node_size) {
     *head = NULL;
 }
 
-// Lägger till en nod i slutet av listan
 void list_insert(Node** head, int data) {
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
     if (new_node == NULL) {
@@ -32,7 +30,6 @@ void list_insert(Node** head, int data) {
     }
 }
 
-// Lägger till en nod efter en given nod
 void list_insert_after(Node* prev_node, int data) {
     if (prev_node == NULL) {
         return;
@@ -49,7 +46,6 @@ void list_insert_after(Node* prev_node, int data) {
     prev_node->next = new_node;
 }
 
-// Lägger till en nod före en given nod
 void list_insert_before(Node** head, Node* next_node, int data) {
     if (*head == NULL || next_node == NULL) {
         return;
@@ -78,7 +74,6 @@ void list_insert_before(Node** head, Node* next_node, int data) {
     }
 }
 
-// Tar bort en nod med ett visst värde
 void list_delete(Node** head, int data) {
     if (*head == NULL) {
         return;
@@ -106,7 +101,6 @@ void list_delete(Node** head, int data) {
     mem_free(current);
 }
 
-// Söker efter en nod med ett visst värde
 Node* list_search(Node** head, int data) {
     Node* current = *head;
     while (current != NULL) {
@@ -118,7 +112,6 @@ Node* list_search(Node** head, int data) {
     return NULL;
 }
 
-// Visar innehållet i listan inom ett givet intervall
 void list_display_range(Node** head, Node* start_node, Node* end_node) {
     Node* current;
     if (start_node != NULL) {
@@ -138,12 +131,10 @@ void list_display_range(Node** head, Node* start_node, Node* end_node) {
     printf("]\n");
 }
 
-// Visar hela listan
 void list_display(Node** head) {
     list_display_range(head, *head, NULL);
 }
 
-// Räknar antalet noder i listan
 int list_count_nodes(Node** head) {
     int node_counter = 0;
     Node* current = *head;
@@ -154,7 +145,6 @@ int list_count_nodes(Node** head) {
     return node_counter;
 }
 
-// Rensar hela listan och frigör minnet
 void list_cleanup(Node** head) {
     Node* current = *head;
     while (current != NULL) {
