@@ -20,11 +20,11 @@ void mem_init(size_t size) {
     }
 
     free_memory_array = (Memory_Block*) memory_pool;
-    free_memory_array->size = size - sizeof(Memory_Block);
+    free_memory_array->size = size - sizeof(Memory_Block); 
     free_memory_array->free = 1;
     free_memory_array->next = NULL;
     
-    memory_left = size - sizeof(Memory_Block);
+    memory_left = free_memory_array->size;
 }
 
 void* mem_alloc(size_t size) {
@@ -38,9 +38,9 @@ void* mem_alloc(size_t size) {
     while (current != NULL) {
         if (current->free && current->size >= size) {
 
-            if (current->size >= size) { 
+            if (current->size > size + sizeof(Memory_Block)) { 
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = current->size - size;
+                new_block->size = current->size - size - sizeof(Memory_Block);
                 new_block->free = 1;
                 new_block->next = current->next;
 
@@ -49,7 +49,7 @@ void* mem_alloc(size_t size) {
             }
 
             current->free = 0;
-            memory_left -= size;  
+            memory_left -= size + sizeof(Memory_Block);  // Dra bort både blocket och dess metadatastruktur
             printf("%zu Memory left\n", memory_left);
             return (void*)(current + 1);  
         }
@@ -59,7 +59,6 @@ void* mem_alloc(size_t size) {
     printf("Not enough memory\n");
     return NULL;
 }
-
 
 void mem_free(void* block) {
     if (block == NULL) {
@@ -106,4 +105,3 @@ void mem_deinit() {
     free_memory_array = NULL;
     memory_left = 0;
 }
-
