@@ -49,7 +49,7 @@ void* mem_alloc(size_t size) {
             }
 
             current->free = 0;
-            memory_left -= size + sizeof(Memory_Block); 
+            memory_left -= size; 
             printf("%zu Memory left\n", memory_left);
             return (void*)(current + 1);  
         }
