@@ -20,7 +20,7 @@ void mem_init(size_t size) {
     }
 
     free_memory_array = (Memory_Block*) memory_pool;
-    free_memory_array->size = size; 
+    free_memory_array->size = size - sizeof(Memory_Block); 
     free_memory_array->free = 1;
     free_memory_array->next = NULL;
     
@@ -30,17 +30,19 @@ void mem_init(size_t size) {
 void* mem_alloc(size_t size) {
     Memory_Block* current = free_memory_array;
 
-    if (size == 0 || memory_left < size) {
+    if (size == 0 || memory_left < size + sizeof(Memory_Block)) {
         printf("Not enough memory\n");
         return NULL;
     }
 
     while (current != NULL) {
-        if (current->free && current->size >= size) {
+        if (current->free && current->size == size) {
 
-            if (current->size > size) { 
-                Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = current->size - size;
+            current -> free = 0;
+            // Only split the block if there's enough space for a new block plus user memory
+            if (current->size >= size + sizeof(Memory_Block)) { 
+                Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size); //
+                new_block->size = current->size - size - sizeof(Memory_Block);
                 new_block->free = 1;
                 new_block->next = current->next;
 
@@ -48,12 +50,13 @@ void* mem_alloc(size_t size) {
                 current->next = new_block;
             }
 
+            // If block is exactly the right size, just mark it as used
             current->free = 0;
             memory_left -= size + sizeof(Memory_Block); 
             printf("%zu Memory left\n", memory_left);
-            return (void*)(current + 1);  
+            return (void*)(current + 1);  // Return the memory after the metadata
         }
-        current = current->next;
+        current = current->next; // Current block not suitable
     }
 
     printf("Not enough memory\n");
@@ -104,4 +107,22 @@ void mem_deinit() {
     memory_pool = NULL;
     free_memory_array = NULL;
     memory_left = 0;
+}
+
+int main() {
+    mem_init(1024);  // Initialize with 1KB of memory
+    void *block1 = mem_alloc(512);
+    printf("Block1 allocated: %p\n", block1);
+    
+    void *block2 = mem_alloc(512);
+    printf("Block2 allocated: %p\n", block2);
+    
+    void *block3 = mem_alloc(100);  // This should fail, no space left
+    printf("Block3 allocated: %p (should be NULL)\n", block3);
+    
+    mem_free(block1);
+    mem_free(block2);
+    mem_deinit();
+
+    return 0;
 }
