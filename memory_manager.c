@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "memory_manager.h"
 
 
 typedef struct Memory_Block {
@@ -15,9 +14,16 @@ Memory_Block* free_memory_array = NULL;
 size_t memory_left = 0;
 
 void mem_init(size_t size) {
+    if (size == 0) {
+        printf("Error: Cannot initialize memory pool with size 0\n");
+        return;
+    }
+
+    printf("Initializing memory pool with size: %zu\n", size);
+    
     memory_pool = malloc(size);
     if (memory_pool == NULL) {
-        printf("Failed to allocate memory pool\n");
+        printf("Failed to allocate memory pool (mem_init)\n");
         return;
     }
 
@@ -28,18 +34,31 @@ void mem_init(size_t size) {
     free_memory_array->next = NULL;
     
     memory_left = free_memory_array->size;
+
+        // Print out debug info for free_memory_array
+    printf("Memory block (free_memory_array) initialized with size: %zu\n", free_memory_array->size);
+    printf("Memory left (AFTER INIT): %zu\n", memory_left);
+    printf("Memory block is free: %d\n", free_memory_array->free);
+    printf("Memory block address: %p\n", (void*)free_memory_array);
 }
 
 void* mem_alloc(size_t size) {
+    printf("\nAttempting to allocate memory of size: %zu\n", size);
     Memory_Block* current = free_memory_array;
 
+    // Print the address of free_memory_array (start of the memory blocks)
+    printf("free_memory_array points to address: %p\n", (void*)free_memory_array);
+    printf("Memory left before allocation: %zu\n", memory_left);
+
+    printf("This is the size of memory: %zu\n", size);
     if (size == 0 || memory_left < size) {
-        printf("Not enough memory\n");
+        printf("Not eNoUgH memory (size is 0 or memory left is < than size)\n");
         return NULL;
     }
 
     while (current != NULL) {
         if (current->free && current->size >= size) {
+            printf("Found a free block with size: %zu\n", current->size);
 
             if (current->size >= size) { 
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
@@ -59,7 +78,7 @@ void* mem_alloc(size_t size) {
         current = current->next;
     }
 
-    printf("Not enough memory\n");
+    printf("Not enough memory (there isn't really any memory)\n");
     return NULL;
 }
 

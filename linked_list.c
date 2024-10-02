@@ -12,7 +12,7 @@ void list_init(Node** head,size_t node_size) {
 void list_insert(Node** head, int data) {
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
     if (new_node == NULL) {
-        printf("Failed to allocate memory for new node\n");
+        printf("Failed to allocate memory for new node(list_insert)\n");
         return;
     }
 
@@ -37,7 +37,7 @@ void list_insert_after(Node* prev_node, int data) {
 
     Node* new_node = (Node*)mem_alloc(sizeof(Node));
     if (new_node == NULL) {
-        printf("Failed to allocate memory for new node\n");
+        printf("Failed to allocate memory for new node(list_insert_after)\n");
         return;
     }
 
@@ -64,7 +64,7 @@ void list_insert_before(Node** head, Node* next_node, int data) {
     if (current != NULL) {
         Node* new_node = (Node*)mem_alloc(sizeof(Node));
         if (new_node == NULL) {
-            printf("Failed to allocate memory for new node\n");
+            printf("Failed to allocate memory for new node(list_insert_before)\n");
             return;
         }
 
@@ -155,3 +155,91 @@ void list_cleanup(Node** head) {
     *head = NULL;
 }
 
+// int main() {
+//     // Initialize the memory pool before any list operations
+//     mem_init(1024);  // Initialize 1MB memory pool
+
+//     Node* head;
+    
+//     // Initialize the list
+//     list_init(&head, sizeof(Node));
+//     printf("List initialized. \n");
+
+//     // Edge Case 1: Delete from an empty list
+//     printf("Attempting to delete node from empty list...\n");
+//     list_delete(&head, 10);
+//     list_display(&head);  // Should display []
+
+//     // Edge Case 2: Search in an empty list
+//     printf("Searching for node in empty list...\n");
+//     Node* found = list_search(&head, 10);
+//     if (found) {
+//         printf("Node with data 10 found.\n");
+//     } else {
+//         printf("Node with data 10 not found.\n");  // Expected
+//     }
+
+//     // Inserting nodes into the list
+//     printf("Inserting nodes into the list...\n");
+//     list_insert(&head, 5);
+//     list_insert(&head, 10);
+//     list_insert(&head, 15);
+//     list_display(&head);  // Should display [5, 10, 15]
+
+//     // Edge Case 3: Delete a non-existent node (20)
+//     printf("Attempting to delete a non-existent node (20)...\n");
+//     list_delete(&head, 20);  // Should not crash or affect list
+//     list_display(&head);  // Should still display [5, 10, 15]
+
+//     // Search for an existing node
+//     printf("Searching for node with data 10...\n");
+//     found = list_search(&head, 10);
+//     if (found) {
+//         printf("Node with data 10 found.\n");  // Expected
+//     } else {
+//         printf("Node with data 10 not found.\n");
+//     }
+
+//     // Search for a non-existent node
+//     printf("Searching for node with data 20...\n");
+//     found = list_search(&head, 20);
+//     if (found) {
+//         printf("Node with data 20 found.\n");
+//     } else {
+//         printf("Node with data 20 not found.\n");  // Expected
+//     }
+
+//     // Edge Case 4: Delete the head node
+//     printf("Deleting the head node (5)...\n");
+//     list_delete(&head, 5);
+//     list_display(&head);  // Should display [10, 15]
+
+//     // Edge Case 5: Delete the last node
+//     printf("Deleting the last node (15)...\n");
+//     list_delete(&head, 15);
+//     list_display(&head);  // Should display [10]
+
+//     // Edge Case 6: Delete the only remaining node
+//     printf("Deleting the only remaining node (10)...\n");
+//     list_delete(&head, 10);
+//     list_display(&head);  // Should display []
+
+//     // Edge Case 7: Cleanup an already empty list
+//     printf("Cleaning up the empty list...\n");
+//     list_cleanup(&head);  // Should not crash
+//     list_display(&head);  // Should display []
+
+//     // Inserting nodes again to test list_cleanup
+//     printf("Inserting nodes (5, 10, 15) again for cleanup test...\n");
+//     list_insert(&head, 5);
+//     list_insert(&head, 10);
+//     list_insert(&head, 15);
+//     list_display(&head);  // Should display [5, 10, 15]
+
+//     // Edge Case 8: Cleanup with multiple nodes
+//     printf("Cleaning up the list with multiple nodes...\n");
+//     list_cleanup(&head);  // Should free all nodes
+//     list_display(&head);  // Should display []
+
+//     return 0;
+// }
