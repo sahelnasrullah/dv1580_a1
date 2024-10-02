@@ -22,6 +22,7 @@ void mem_init(size_t size) {
     }
 
     free_memory_array = (Memory_Block*) memory_pool;
+
     free_memory_array->size = size; 
     free_memory_array->free = 1;
     free_memory_array->next = NULL;
@@ -40,7 +41,7 @@ void* mem_alloc(size_t size) {
     while (current != NULL) {
         if (current->free && current->size >= size) {
 
-            if (current->size > size) { 
+            if (current->size >= size) { 
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
                 new_block->size = current->size - size;
                 new_block->free = 1;
