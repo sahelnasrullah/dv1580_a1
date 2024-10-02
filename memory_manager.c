@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//#include "memory_manager.h"
+
 
 typedef struct Memory_Block {
     size_t size;
@@ -105,3 +107,23 @@ void mem_deinit() {
     free_memory_array = NULL;
     memory_left = 0;
 }
+
+
+
+// int main() {
+
+//     int* test_alloc = (int*)mem_alloc(sizeof(int));
+//     if (test_alloc == NULL) {
+//         printf("Memory allocation failed\n");
+//         return 1;
+//     }
+
+
+//     *test_alloc = 42;
+//     printf("Memory allocation succeeded, value: %d\n", *test_alloc);
+
+
+//     mem_free(test_alloc);
+
+//     return 0;
+// }
