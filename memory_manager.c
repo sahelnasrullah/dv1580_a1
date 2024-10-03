@@ -51,7 +51,11 @@ void* mem_alloc(size_t size) {
     printf("Memory left before allocation: %zu\n", memory_left);
 
     printf("This is the size of memory: %zu\n", size);
-    if (size == 0 || memory_left < size) {
+
+    if (size == 0) {
+        return (void*)(current+1);
+    }
+    if (memory_left < size) {
         printf("Not eNoUgH memory (size is 0 or memory left is < than size)\n");
         return NULL;
     }
@@ -128,22 +132,3 @@ void mem_deinit() {
     memory_left = 0;
 }
 
-
-
-// int main() {
-
-//     int* test_alloc = (int*)mem_alloc(sizeof(int));
-//     if (test_alloc == NULL) {
-//         printf("Memory allocation failed\n");
-//         return 1;
-//     }
-
-
-//     *test_alloc = 42;
-//     printf("Memory allocation succeeded, value: %d\n", *test_alloc);
-
-
-//     mem_free(test_alloc);
-
-//     return 0;
-// }
