@@ -62,7 +62,7 @@ void* mem_alloc(size_t size) {
 
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            printf("Found a free block with size: %zu\n", current->size);
+            //printf("Found a free block with size: %zu\n", current->size);
 
             if (current->size >= size) { 
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
@@ -76,7 +76,7 @@ void* mem_alloc(size_t size) {
 
             current->free = 0;
             memory_left -= size; 
-            printf("%zu Memory left\n", memory_left);
+            //printf("%zu Memory left\n", memory_left);
             return (void*)(current + 1);  
         }
         current = current->next;
