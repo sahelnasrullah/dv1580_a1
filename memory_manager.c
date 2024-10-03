@@ -19,7 +19,7 @@ void mem_init(size_t size) {
         return;
     }
 
-    printf("Initializing memory pool with size: %zu\n", size);
+    //printf("Initializing memory pool with size: %zu\n", size);
     
     memory_pool = malloc(size);
     if (memory_pool == NULL) {
@@ -35,22 +35,22 @@ void mem_init(size_t size) {
     
     memory_left = free_memory_array->size;
 
-        // Print out debug info for free_memory_array
-    printf("Memory block (free_memory_array) initialized with size: %zu\n", free_memory_array->size);
-    printf("Memory left (AFTER INIT): %zu\n", memory_left);
-    printf("Memory block is free: %d\n", free_memory_array->free);
-    printf("Memory block address: %p\n", (void*)free_memory_array);
+        // Debug
+    // printf("Memory block (free_memory_array) initialized with size: %zu\n", free_memory_array->size);
+    // printf("Memory left (AFTER INIT): %zu\n", memory_left);
+    // printf("Memory block is free: %d\n", free_memory_array->free);
+    // printf("Memory block address: %p\n", (void*)free_memory_array);
 }
 
 void* mem_alloc(size_t size) {
-    printf("\nAttempting to allocate memory of size: %zu\n", size);
+    // printf("\nAttempting to allocate memory of size: %zu\n", size);
     Memory_Block* current = free_memory_array;
 
     // Print the address of free_memory_array (start of the memory blocks)
-    printf("free_memory_array points to address: %p\n", (void*)free_memory_array);
-    printf("Memory left before allocation: %zu\n", memory_left);
+    // printf("free_memory_array points to address: %p\n", (void*)free_memory_array);
+    // printf("Memory left before allocation: %zu\n", memory_left);
 
-    printf("This is the size of memory: %zu\n", size);
+    // printf("This is the size of memory: %zu\n", size);
 
     if (size == 0) {
         return NULL; //(void*)(current+1);

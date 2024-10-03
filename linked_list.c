@@ -7,7 +7,8 @@
 
 void list_init(Node** head,size_t node_size) {
     if (memory_pool == NULL) {
-        mem_init(1024);  // Initialize the memory pool with 1024 bytes (or a suitable size)
+        size_t poolSize = node_size * 100;
+        mem_init(node_size);  // Initialize the memory pool with 1024 bytes (or a suitable size)
         printf("Memory pool initialized in list_init\n");
     }
     *head = NULL;
@@ -56,7 +57,14 @@ void list_insert_before(Node** head, Node* next_node, int data) {
     }
 
     if (*head == next_node) {
-        list_insert(head, data);
+        Node* new_node = (Node*)mem_alloc(sizeof(Node));
+        if (new_node == NULL) {
+            printf("Failed to allocate memory for new node(list_insert_before)\n");
+            return;
+        }
+        new_node->data = data;
+        new_node->next = *head;  
+        *head = new_node;     
         return;
     }
 
@@ -73,8 +81,8 @@ void list_insert_before(Node** head, Node* next_node, int data) {
         }
 
         new_node->data = data;
-        new_node->next = next_node;
-        current->next = new_node;
+        new_node->next = next_node; 
+        current->next = new_node; 
     }
 }
 
