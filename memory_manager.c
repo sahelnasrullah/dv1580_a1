@@ -53,7 +53,7 @@ void* mem_alloc(size_t size) {
     printf("This is the size of memory: %zu\n", size);
 
     if (size == 0) {
-        return (void*)(current+1);
+        return NULL; //(void*)(current+1);
     }
     if (memory_left < size) {
         printf("Not eNoUgH memory (size is 0 or memory left is < than size)\n");

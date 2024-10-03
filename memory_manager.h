@@ -12,6 +12,7 @@ typedef struct Memory_Block {
 
 extern void* memory_pool;
 extern Memory_Block* free_memory_array;
+extern size_t memory_left;
 
 void mem_init(size_t size);
 void* mem_alloc(size_t size);

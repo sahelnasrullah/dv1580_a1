@@ -6,6 +6,10 @@
 #include "linked_list.h"
 
 void list_init(Node** head,size_t node_size) {
+    if (memory_pool == NULL) {
+        mem_init(1024);  // Initialize the memory pool with 1024 bytes (or a suitable size)
+        printf("Memory pool initialized in list_init\n");
+    }
     *head = NULL;
 }
 
@@ -154,4 +158,3 @@ void list_cleanup(Node** head) {
     }
     *head = NULL;
 }
-

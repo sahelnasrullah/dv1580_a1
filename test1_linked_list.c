@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include <stddef.h>
+# include "memory_manager.h"
 
 
 #include "common_defs.h"
@@ -475,6 +476,7 @@ void test_list_edge_cases()
 }
 
 void run_all_tests() {
+
     test_list_init();
     test_list_insert();
     test_list_insert_after();
