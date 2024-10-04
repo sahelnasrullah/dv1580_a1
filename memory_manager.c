@@ -39,7 +39,7 @@ void mem_init(size_t size) {
 }
 
 void* mem_alloc(size_t size) {
-    if (size == 0 || size + sizeof(Memory_Block) > memory_left) {
+    if (size == 0 || size > memory_left) {
         return NULL; 
     }
 
@@ -47,7 +47,7 @@ void* mem_alloc(size_t size) {
     void* allocated_memory = NULL;
 
     while (current != NULL) {
-        if (current->free && current->size >= size + sizeof(Memory_Block)) {
+        if (current->free && current->size >= size) {
             allocated_memory = (void*)(current + 1); 
             current->free = 0; 
             size_t remaining_size = current->size - size;
