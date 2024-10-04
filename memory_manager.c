@@ -1,26 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+
 
 typedef struct Memory_Block {
     size_t size;
-    int free; 
+    int free;  // 1 if free, 0 if used
     struct Memory_Block* next;
-    int place;
 } Memory_Block;
 
 void* memory_pool = NULL;
 Memory_Block* free_memory_array = NULL;
 size_t memory_left = 0;
-size_t* listSize; 
-bool* is_free;   
 
 void mem_init(size_t size) {
     if (size == 0) {
         printf("Error: Cannot initialize memory pool with size 0\n");
         return;
     }
+
+    //printf("Initializing memory pool with size: %zu\n", size);
     
     memory_pool = malloc(size);
     if (memory_pool == NULL) {
@@ -29,50 +28,54 @@ void mem_init(size_t size) {
     }
 
     free_memory_array = (Memory_Block*) memory_pool;
+
     free_memory_array->size = size; 
     free_memory_array->free = 1;
     free_memory_array->next = NULL;
-    free_memory_array->place = 0; 
     
     memory_left = free_memory_array->size;
 
-    listSize = malloc(sizeof(size_t));
-    is_free = malloc(sizeof(bool));
-    listSize[0] = size;
-    is_free[0] = true;
+
 }
 
 void* mem_alloc(size_t size) {
-    if (size == 0 || size > memory_left) {
-        return NULL; 
-    }
 
     Memory_Block* current = free_memory_array;
-    void* allocated_memory = NULL;
 
-    while (current != NULL) {
-        size_t currentSize = current->size;
-        bool currentIsFree = current->free;
 
-        if (currentIsFree && currentSize >= size) {
-            if (currentSize >= size) {
-                Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = currentSize - size;
-                new_block->free = 1;
-                new_block->next = current->next;
-                new_block->place = current->place + 1;
 
-                current->next = new_block;
-                current->size = size; 
-            }
-            current->free = 0; 
-            memory_left -= size; 
-            return (void*)((char*)current); 
-        }
-        current = current->next; 
+    if (size == 0) {
+        return NULL;
+    }
+    if (memory_left < size) {
+        printf("Not eNoUgH memory (size is 0 or memory left is < than size)\n");
+        return NULL;
     }
 
-    return NULL; 
+    while (current != NULL) {
+        if (current->free && current->size >= size) {
+            //printf("Found a free block with size: %zu\n", current->size);
+
+            if (current->size >= size) { 
+                Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
+                new_block->size = current->size - size;
+                new_block->free = 1;
+                new_block->next = current->next;
+
+                current->size = size;
+                current->next = new_block;
+            }
+
+            current->free = 0;
+            memory_left -= size; 
+            //printf("%zu Memory left\n", memory_left);
+            return (void*)(current + 1);  
+        }
+        current = current->next;
+    }
+
+    printf("Not enough memory (there isn't really any memory)\n");
+    return NULL;
 }
 
 void mem_free(void* block) {
@@ -119,6 +122,4 @@ void mem_deinit() {
     memory_pool = NULL;
     free_memory_array = NULL;
     memory_left = 0;
-    free(listSize); // Free the size array
-    free(is_free);  // Free the free status array
 }
