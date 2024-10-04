@@ -64,7 +64,7 @@ void list_insert_before(Node** head, Node* next_node, int data) {
     }
 
     if (*head == next_node) {
-        Node* new_node = (Node*)malloc(sizeof(Node));
+        Node* new_node = (Node*)mem_alloc(sizeof(Node));
         if (new_node == NULL) {
             printf("Failed to allocate memory for new node(list_insert_before)\n");
             return;
