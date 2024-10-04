@@ -18,7 +18,7 @@ void mem_init(size_t size) {
         return;
     }
 
-    memory_pool = malloc(size);
+    malloc(size * sizeof(Memory_Block));
     if (memory_pool == NULL) {
         printf("Failed to allocate memory pool (mem_init)\n");
         return;
