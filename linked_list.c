@@ -44,19 +44,18 @@ void list_insert(Node** head, int data) {
 
 void list_insert_after(Node* prev_node, int data) {
     if (prev_node == NULL) {
-        return; 
-    }
-
-
-    Node* new_node = (Node*)malloc(sizeof(Node));
-    if (new_node == NULL) {
-        printf("Failed to allocate memory for new node (list_insert_after)\n");
         return;
     }
 
-    new_node->data = data; // Set the data for the new node
-    new_node->next = prev_node->next; // Link the new node to the next node
-    prev_node->next = new_node; // Link the previous node to the new node
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        printf("Failed to allocate memory for new node(list_insert_after)\n");
+        return;
+    }
+
+    new_node->data = data;
+    new_node->next = prev_node->next;
+    prev_node->next = new_node;
 }
 
 void list_insert_before(Node** head, Node* next_node, int data) {
