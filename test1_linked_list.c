@@ -322,6 +322,19 @@ void test_list_display()
     printf_green("  ... [PASS].\n");
 }
 
+
+void test_static_display() {
+    Node n1, n2, n3;
+    n1.data = 10; n1.next = &n2;
+    n2.data = 20; n2.next = &n3;
+    n3.data = 30; n3.next = NULL;
+
+    Node* head = &n1;
+
+    printf("Expected: [10, 20, 30]\n");
+    list_display(&head);  // Bör visa [10, 20, 30]
+}
+
 void test_list_count_nodes()
 {
     printf_yellow("  Testing list_count_nodes ---> ");
@@ -491,8 +504,9 @@ void run_all_tests() {
     test_list_insert_loop(100);  // Example stress test with 100 insertions
     test_list_insert_after_loop(100);
     test_list_delete_loop(100);
-    test_list_search_loop(100);
+    test_list_search_loop(100); 
     test_list_edge_cases();
+    test_static_display(); // kk
 }
 
 int main() {
@@ -515,6 +529,7 @@ int main() {
     printf(" 12. test_list_delete_loop - Test multiple deletions\n");
     printf(" 13. test_list_search_loop - Test multiple searches\n");
     printf(" 14. test_list_edge_cases - Test edge cases\n");
+    printf(" 15.test_static_display - Test edge cases\n");
     printf(" 0. Run all tests\n");
 
     printf("Enter your choice: ");
@@ -535,6 +550,7 @@ int main() {
         case 12: test_list_delete_loop(100); break;
         case 13: test_list_search_loop(100); break;
         case 14: test_list_edge_cases(); break;
+        case 15: test_static_display(); break;
         case 0: run_all_tests(); break;
         default: printf("Invalid choice.\n");
     }

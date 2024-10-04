@@ -8,16 +8,16 @@
 void list_init(Node** head,size_t node_size) {
     if (memory_pool == NULL) {
         size_t poolSize = node_size * 100;
-        mem_init(node_size);  // Initialize the memory pool with 1024 bytes (or a suitable size)
+        mem_init(node_size);
         printf("Memory pool initialized in list_init\n");
     }
     *head = NULL;
 }
 
 void list_insert(Node** head, int data) {
-    Node* new_node = (Node*)mem_alloc(sizeof(Node));
+    Node* new_node = (Node*)malloc(sizeof(Node));
     if (new_node == NULL) {
-        printf("Failed to allocate memory for new node(list_insert)\n");
+        printf("Failed to allocate memory for new node (list_insert)\n");
         return;
     }
 
@@ -26,13 +26,20 @@ void list_insert(Node** head, int data) {
 
     if (*head == NULL) {
         *head = new_node;
+        // printf("Head node set to: %p (data: %d)\n", *head, (*head)->data);
     } else {
         Node* current = *head;
+        // printf("Traversing to the end of the list to insert new node...\n");
         while (current->next != NULL) {
+            // printf("Current node: %p (data: %d), Next node: %p\n", current, current->data, current->next);
             current = current->next;
         }
         current->next = new_node;
+        // printf("Linked node %p (data: %d) to new node %p (data: %d)\n", current, current->data, new_node, new_node->data);
     }
+
+
+    // printf("Head node address after insert: %p (data: %d)\n", *head, (*head)->data);
 }
 
 void list_insert_after(Node* prev_node, int data) {
@@ -124,39 +131,45 @@ Node* list_search(Node** head, int data) {
     return NULL;
 }
 
+void list_display(Node** head) {
+    printf("list_display function has been called.\n");
+
+    Node* current = *head;
+    printf("[");
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]\n");
+}
+
 void list_display_range(Node** head, Node* start_node, Node* end_node) {
-
-    Node* current = (start_node != NULL) ? start_node : *head;
-
-
-    if (current == NULL) {
+    if (*head == NULL || start_node == NULL) {
         printf("[]");
         return;
     }
-
-
+    
+    Node* current = (*head == start_node) ? *head : start_node;
     printf("[");
     
-    int first = 1;
-    while (current != NULL && (end_node == NULL || current != end_node->next)) {
-
-        if (!first) {
+    while (current != NULL) {
+        printf("%d", current->data);
+        
+        if (current == end_node) {
+            break;
+        }
+        
+        if (current->next != NULL && current != end_node) {
             printf(", ");
         }
-
-
-        printf("%d", current->data);
-        first = 0;
-
-
+        
         current = current->next;
     }
-
+    
     printf("]");
-}
-
-void list_display(Node** head) {
-    list_display_range(head, NULL, NULL);
 }
 
 int list_count_nodes(Node** head) {
