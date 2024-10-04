@@ -43,47 +43,44 @@ void mem_init(size_t size) {
 }
 
 void* mem_alloc(size_t size) {
-    // Debug: Attempting to allocate memory
+
     printf("\nAttempting to allocate memory of size: %zu\n", size);
     Memory_Block* current = free_memory_array;
 
-    // Check for zero allocation
+
     if (size == 0) {
         printf("Requested size is 0, returning NULL.\n");
         return NULL;
     }
-    
-    // Check if there is enough memory left
+
+
     if (memory_left < size) {
         printf("Not enough memory left (available: %zu, requested: %zu)\n", memory_left, size);
         return NULL;
     }
 
-    // Traverse the linked list of memory blocks
+
     while (current != NULL) {
-        // Debug: Check each block
+
         printf("Checking block at %p with size %zu\n", (void*)current, current->size);
 
-        if (current->free && current->size >= size) {
-            // Found a suitable block
+        if (current->free && current->size >= size + sizeof(Memory_Block)) { // Ensure there's enough space
             printf("Found a suitable block at %p with size %zu\n", (void*)current, current->size);
 
-            // If the block is larger than needed, split it
-            if (current->size > size + sizeof(Memory_Block)) {
-                Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = current->size - size - sizeof(Memory_Block);
-                new_block->free = 1;
-                new_block->next = current->next;
 
-                // Update the current block to hold the new size
-                current->size = size;
-                current->next = new_block;
-            }
+            Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
+            new_block->size = current->size - size - sizeof(Memory_Block);
+            new_block->free = 1;
+            new_block->next = current->next;
 
-            current->free = 0; // Mark the block as allocated
-            memory_left -= size; // Decrease the available memory
+
+            current->size = size;
+            current->next = new_block;
+
+            current->free = 0; 
+            memory_left -= size;
             printf("Allocated block at %p, memory left: %zu\n", (void*)current, memory_left);
-            return (void*)(current + 1); // Return a pointer to the data area
+            return (void*)(current + 1);
         }
         current = current->next;
     }
