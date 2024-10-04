@@ -38,38 +38,64 @@ void mem_init(size_t size) {
 
 }
 
+// void* mem_alloc(size_t size) {
+//     if (size == 0 || size > memory_left) {
+//         return NULL; 
+//     }
+
+//     Memory_Block* current = free_memory_array;
+//     void* allocated_memory = NULL;
+
+//     while (current != NULL) {
+//         if (current->free && current->size >= size) {
+//             allocated_memory = (void*)(current + 1); 
+//             current->free = 0; 
+//             size_t remaining_size = current->size - size;
+
+//             if (remaining_size > 0) {
+//                 Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
+//                 new_block->size = remaining_size;
+//                 new_block->free = 1;
+//                 new_block->next = current->next;
+//                 current->next = new_block; 
+//                 current->size = size; 
+//             } else {
+//                 current->size = size; 
+//             }
+
+//             memory_left -= size; 
+//             return allocated_memory; 
+//         }
+//         current = current->next; 
+//     }
+
+//     return NULL; 
+// }
+
 void* mem_alloc(size_t size) {
-    if (size == 0 || size > memory_left) {
-        return NULL; 
-    }
-
     Memory_Block* current = free_memory_array;
-    void* allocated_memory = NULL;
 
+    //current -> size = current -> size + sizeof(Memory_Block);
+
+    // Traverse the free list to find a suitable block
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            allocated_memory = (void*)(current + 1); 
-            current->free = 0; 
-            size_t remaining_size = current->size - size;
-
-            if (remaining_size > 0) {
+            // Split the block if it's larger than the requested size + overhead
+            if (current->size >= size ) {
                 Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = remaining_size;
+                new_block->size = current->size - size;
                 new_block->free = 1;
                 new_block->next = current->next;
-                current->next = new_block; 
-                current->size = size; 
-            } else {
-                current->size = size; 
+
+                current->next = new_block;
+                current->size = size;
             }
-
-            memory_left -= size; 
-            return allocated_memory; 
+            current->free = 0;
+            return (void*)((char*)current + sizeof(Memory_Block));
         }
-        current = current->next; 
+        current = current->next;
     }
-
-    return NULL; 
+    return NULL; // No suitable block found
 }
 
 void mem_free(void* block) {
