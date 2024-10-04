@@ -35,59 +35,46 @@ void mem_init(size_t size) {
     
     memory_left = free_memory_array->size;
 
-        // Debug
-    // printf("Memory block (free_memory_array) initialized with size: %zu\n", free_memory_array->size);
-    // printf("Memory left (AFTER INIT): %zu\n", memory_left);
-    // printf("Memory block is free: %d\n", free_memory_array->free);
-    // printf("Memory block address: %p\n", (void*)free_memory_array);
+
 }
 
 void* mem_alloc(size_t size) {
-    printf("\nAttempting to allocate memory of size: %zu\n", size);
+
     Memory_Block* current = free_memory_array;
 
-    // Handle zero size requests
+
+
     if (size == 0) {
-        printf("Requested size is 0, returning NULL.\n");
         return NULL;
     }
-
-    // Ensure requested size is not greater than available memory
     if (memory_left < size) {
-        printf("Not enough memory left (available: %zu, requested: %zu)\n", memory_left, size);
+        printf("Not eNoUgH memory (size is 0 or memory left is < than size)\n");
         return NULL;
     }
 
     while (current != NULL) {
-        printf("Checking block at %p with size %zu\n", (void*)current, current->size);
-
-
         if (current->free && current->size >= size) {
-            printf("Found a suitable block at %p with size %zu\n", (void*)current, current->size);
-
+            //printf("Found a free block with size: %zu\n", current->size);
 
             if (current->size >= size) { 
-
-                Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
+                Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
                 new_block->size = current->size - size;
-                new_block->free = 1; 
+                new_block->free = 1;
                 new_block->next = current->next;
-                current->next = new_block; 
-            } else {
 
-                size += sizeof(Memory_Block);
+                current->size = size;
+                current->next = new_block;
             }
 
-            current->size = size;
-            current->free = 0; 
+            current->free = 0;
             memory_left -= size; 
-            printf("Allocated block at %p, memory left: %zu\n", (void*)current, memory_left);
-            return (void*)(current + 1); 
+            //printf("%zu Memory left\n", memory_left);
+            return (void*)(current + 1);  
         }
         current = current->next;
     }
 
-    printf("Not enough memory (no suitable block found)\n");
+    printf("Not enough memory (there isn't really any memory)\n");
     return NULL;
 }
 
@@ -136,4 +123,3 @@ void mem_deinit() {
     free_memory_array = NULL;
     memory_left = 0;
 }
-
