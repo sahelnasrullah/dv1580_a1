@@ -1,25 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
 
 typedef struct Memory_Block {
     size_t size;
-    int free;  // 1 if free, 0 if used
+    int free; 
     struct Memory_Block* next;
+    int place;
 } Memory_Block;
 
 void* memory_pool = NULL;
 Memory_Block* free_memory_array = NULL;
 size_t memory_left = 0;
+size_t* listSize; 
+bool* is_free;   
 
 void mem_init(size_t size) {
     if (size == 0) {
         printf("Error: Cannot initialize memory pool with size 0\n");
         return;
     }
-
-    //printf("Initializing memory pool with size: %zu\n", size);
     
     memory_pool = malloc(size);
     if (memory_pool == NULL) {
@@ -28,74 +29,50 @@ void mem_init(size_t size) {
     }
 
     free_memory_array = (Memory_Block*) memory_pool;
-
     free_memory_array->size = size; 
     free_memory_array->free = 1;
     free_memory_array->next = NULL;
+    free_memory_array->place = 0; 
     
     memory_left = free_memory_array->size;
 
-
+    listSize = malloc(sizeof(size_t));
+    is_free = malloc(sizeof(bool));
+    listSize[0] = size;
+    is_free[0] = true;
 }
 
-// void* mem_alloc(size_t size) {
-//     if (size == 0 || size > memory_left) {
-//         return NULL; 
-//     }
-
-//     Memory_Block* current = free_memory_array;
-//     void* allocated_memory = NULL;
-
-//     while (current != NULL) {
-//         if (current->free && current->size >= size) {
-//             allocated_memory = (void*)(current + 1); 
-//             current->free = 0; 
-//             size_t remaining_size = current->size - size;
-
-//             if (remaining_size > 0) {
-//                 Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-//                 new_block->size = remaining_size;
-//                 new_block->free = 1;
-//                 new_block->next = current->next;
-//                 current->next = new_block; 
-//                 current->size = size; 
-//             } else {
-//                 current->size = size; 
-//             }
-
-//             memory_left -= size; 
-//             return allocated_memory; 
-//         }
-//         current = current->next; 
-//     }
-
-//     return NULL; 
-// }
-
 void* mem_alloc(size_t size) {
+    if (size == 0 || size > memory_left) {
+        return NULL; 
+    }
+
     Memory_Block* current = free_memory_array;
+    void* allocated_memory = NULL;
 
-    //current -> size = current -> size + sizeof(Memory_Block);
-
-    // Traverse the free list to find a suitable block
     while (current != NULL) {
-        if (current->free && current->size >= size) {
-            // Split the block if it's larger than the requested size + overhead
-            if (current->size >= size ) {
+        size_t currentSize = current->size;
+        bool currentIsFree = current->free;
+
+        if (currentIsFree && currentSize >= size) {
+            if (currentSize >= size + sizeof(Memory_Block)) {
                 Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = current->size - size;
+                new_block->size = currentSize - size - sizeof(Memory_Block);
                 new_block->free = 1;
                 new_block->next = current->next;
+                new_block->place = current->place + 1;
 
                 current->next = new_block;
-                current->size = size;
+                current->size = size; 
             }
-            current->free = 0;
-            return (void*)((char*)current + sizeof(Memory_Block));
+            current->free = 0; 
+            memory_left -= size; 
+            return (void*)((char*)current + sizeof(Memory_Block)); 
         }
-        current = current->next;
+        current = current->next; 
     }
-    return NULL; // No suitable block found
+
+    return NULL; 
 }
 
 void mem_free(void* block) {
@@ -142,4 +119,6 @@ void mem_deinit() {
     memory_pool = NULL;
     free_memory_array = NULL;
     memory_left = 0;
+    free(listSize); // Free the size array
+    free(is_free);  // Free the free status array
 }
