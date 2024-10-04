@@ -132,7 +132,10 @@ Node* list_search(Node** head, int data) {
 }
 
 void list_display(Node** head) {
-    printf("list_display function has been called.\n");
+    if (*head == NULL) {
+        printf("[]");
+        return;
+    }
 
     Node* current = *head;
     printf("[");
@@ -143,7 +146,7 @@ void list_display(Node** head) {
         }
         current = current->next;
     }
-    printf("]\n");
+    printf("]");
 }
 
 void list_display_range(Node** head, Node* start_node, Node* end_node) {
