@@ -55,9 +55,9 @@ void* mem_alloc(size_t size) {
         bool currentIsFree = current->free;
 
         if (currentIsFree && currentSize >= size) {
-            if (currentSize >= size + sizeof(Memory_Block)) {
+            if (currentSize >= size) {
                 Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = currentSize - size - sizeof(Memory_Block);
+                new_block->size = currentSize - size;
                 new_block->free = 1;
                 new_block->next = current->next;
                 new_block->place = current->place + 1;
@@ -67,7 +67,7 @@ void* mem_alloc(size_t size) {
             }
             current->free = 0; 
             memory_left -= size; 
-            return (void*)((char*)current + sizeof(Memory_Block)); 
+            return (void*)((char*)current); 
         }
         current = current->next; 
     }
