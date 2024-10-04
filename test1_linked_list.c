@@ -295,8 +295,6 @@ void test_list_display()
 
     // Test case 1: Displaying full list
     capture_stdout(buffer, sizeof(buffer), (void (*)(Node **, Node *, Node *))list_display_range, &head, NULL, NULL);
-    printf("Buffer: '%s'\n", buffer);
-    printf("Expected (stringFull): '%s'\n", stringFull);
     my_assert(strcmp(buffer, stringFull) == 0);
     printf("\tFull list: %s\n", buffer);
 
@@ -321,7 +319,6 @@ void test_list_display()
     list_cleanup(&head);
     printf_green("  ... [PASS].\n");
 }
-
 
 void test_static_display() {
     Node n1, n2, n3;

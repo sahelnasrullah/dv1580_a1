@@ -132,8 +132,10 @@ Node* list_search(Node** head, int data) {
 }
 
 void list_display(Node** head) {
+    printf("list_display function called\n");
+
     if (*head == NULL) {
-        printf("[]");
+        printf("[]\n");
         return;
     }
 
@@ -146,16 +148,16 @@ void list_display(Node** head) {
         }
         current = current->next;
     }
-    printf("]");
+    printf("]\n");
 }
 
 void list_display_range(Node** head, Node* start_node, Node* end_node) {
-    if (*head == NULL || start_node == NULL) {
+    if (*head == NULL) {
         printf("[]");
         return;
     }
-    
-    Node* current = (*head == start_node) ? *head : start_node;
+
+    Node* current = start_node ? start_node : *head;
     printf("[");
     
     while (current != NULL) {
@@ -165,7 +167,7 @@ void list_display_range(Node** head, Node* start_node, Node* end_node) {
             break;
         }
         
-        if (current->next != NULL && current != end_node) {
+        if (current->next != NULL) {
             printf(", ");
         }
         
