@@ -64,12 +64,12 @@ void* mem_alloc(size_t size) {
 
         printf("Checking block at %p with size %zu\n", (void*)current, current->size);
 
-        if (current->free && current->size >= size + sizeof(Memory_Block)) { // Ensure there's enough space
+        if (current->free && current->size >= size) { // Ensure there's enough space
             printf("Found a suitable block at %p with size %zu\n", (void*)current, current->size);
 
 
             Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
-            new_block->size = current->size - size - sizeof(Memory_Block);
+            new_block->size = current->size - size;
             new_block->free = 1;
             new_block->next = current->next;
 
