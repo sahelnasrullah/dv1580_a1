@@ -39,42 +39,35 @@ void mem_init(size_t size) {
 }
 
 void* mem_alloc(size_t size) {
+    if (size == 0 || size > memory_left) {
+        return NULL; 
+    }
 
     Memory_Block* current = free_memory_array;
-
-
-
-    if (size == 0) {
-        return NULL;
-    }
-    if (memory_left < size) {
-        printf("Not eNoUgH memory (size is 0 or memory left is < than size)\n");
-        return NULL;
-    }
+    void* allocated_memory = NULL;
 
     while (current != NULL) {
-        if (current->free && current->size >= size) {
-            //printf("Found a free block with size: %zu\n", current->size);
+        if (current->free && current->size >= size + sizeof(Memory_Block)) {
+            allocated_memory = (void*)(current + 1); 
+            current->free = 0; 
+            size_t remaining_size = current->size - size - sizeof(Memory_Block);
 
-            if (current->size >= size) { 
-                Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
-                new_block->size = current->size - size;
+            if (remaining_size > 0) {
+                Memory_Block* new_block = (Memory_Block*)((char*)current + sizeof(Memory_Block) + size);
+                new_block->size = remaining_size;
                 new_block->free = 1;
                 new_block->next = current->next;
-
-                current->size = size;
-                current->next = new_block;
+                current->next = new_block; 
+                current->size = size; 
+            } else {
+                current->size = size; 
             }
-
-            current->free = 0;
-            memory_left -= size; 
-            //printf("%zu Memory left\n", memory_left);
-            return (void*)(current + 1);  
+            memory_left -= size + sizeof(Memory_Block); 
+            return allocated_memory; 
         }
-        current = current->next;
+        current = current->next; 
     }
 
-    printf("Not enough memory (there isn't really any memory)\n");
     return NULL;
 }
 
