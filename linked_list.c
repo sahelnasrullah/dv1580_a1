@@ -1,9 +1,13 @@
+#include "memory_manager.h"
+#include "linked_list.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "memory_manager.h"
-#include "linked_list.h"
+#include <pthread.h>
+
+
 
 // Initialize list w pointer & initialize memory pool if not already
 void list_init(Node** head, size_t node_size) {
@@ -27,11 +31,15 @@ void list_insert(Node** head, int data) {
     new_node->data = data;
     new_node->next = NULL;
 
-    if (*head == NULL) {
+    if (*head == NULL) 
+    {
         *head = new_node;
-    } else {
+    } 
+    else 
+    {
         Node* current = *head;
-        while (current->next != NULL) {
+        while (current->next != NULL) 
+        {
             current = current->next;
         }
         current->next = new_node;  // Link the new node at the end of the list

@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+// gcc -E memory_manager.c -o memory_manager.i // Preprocessor
+// gcc -S memory_manager.c -o memory_manager.s // Compiler
+// gcc -c memory_manager.c -o memory_manager.o // Assembly
+
 // Define structure memory block
 typedef struct Memory_Block {
     size_t size;          // Size
@@ -51,7 +55,6 @@ void* mem_alloc(size_t size) {
     // traverse to find block large enough
     while (current != NULL) {
         if (current->free && current->size >= size) {
-            if (current->size >= size) { 
                 // Split block if it's big enough
                 Memory_Block* new_block = (Memory_Block*) ((char*)current + sizeof(Memory_Block) + size);
                 new_block->size = current->size - size;
@@ -60,8 +63,7 @@ void* mem_alloc(size_t size) {
 
                 current->size = size;
                 current->next = new_block;
-            }
-
+                
             current->free = 0; 
             memory_left -= size; 
 
